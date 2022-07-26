@@ -15,5 +15,28 @@
 
 package main
 
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+	"os"
+
+	"basicblog"
+)
+
 func main() {
+	var entries []basicblog.BlogEntry
+
+	file, err := os.Open("blogentries.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	err = json.NewDecoder(file).Decode(&entries)
+	if err != nil {
+		log.Fatal("json decode", err)
+	}
+
+	log.Fatal(http.ListenAndServe(":8080", ws(entries)))
 }
